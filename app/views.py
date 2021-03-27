@@ -1,27 +1,48 @@
-import unittest
-from models import source
+from flask import render_template
+from app import app
+from .request import get_sources
+from .request import get_articles_from_source
 
-Source = source.Source
-
-class SourceTest(unittest.TestCase):
+@app.route("/")
+def index():
     '''
-    Test Class to test the behaviour of the Source class
+    View root function that returns index and page and its data
     '''
 
-    def setUp(self):
-        '''
-        Set up method that run before every Test case
-        '''
+    # Getting sport sources
+    sport_sources = get_sources('sports')
 
-        self.new_source = Source("abc", "abc news", "blablabla", "general")
+    # Getting business sources
+    business_sources = get_sources('business')
 
-    def test_init(self):
-        '''
-        test case to test if the source object is initialized
-        '''
+    # Getting entertainment sources
+    # entertainment_sources = get_sources('entertainment')
 
-        self.assertEqual("abc", self.new_source.source_id)
-        self.assertEqual("abc news", self.new_source.source_name)
+    # Getting general sources
+    general_sources = get_sources('general')
 
-if __name__ == '__main__':
-    unittest.main()
+    # Getting health sources
+    health_sources = get_sources('health')
+
+    # Getting science sources
+    science_sources = get_sources('science')
+
+    # Getting technology sources
+    technology_sources = get_sources('technology')
+
+
+    title = "Home - News Article"
+
+    return render_template("index.html", title = title, sports = sport_sources, general = general_sources, technology = technology_sources, health = health_sources, science = science_sources, business = business_sources)
+
+@app.route("/article/<source_id>")
+def source(source_id):
+    '''
+    View route function that returns source page showing all articles of a given source
+    '''
+
+    title = f'{source_id}'
+    articles_list = get_articles_from_source(source_id)
+
+    return render_template('source.html',title = title, articles = articles_list)
+    
